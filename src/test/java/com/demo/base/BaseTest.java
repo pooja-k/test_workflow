@@ -15,7 +15,6 @@ public class BaseTest {
     @BeforeClass
     public void launchBrowser() {
         playwright = Playwright.create();
-        // Headless is true by default, perfect for CI/CD environments like GitHub Actions
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
     }
 
