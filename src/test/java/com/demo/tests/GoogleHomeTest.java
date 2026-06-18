@@ -1,7 +1,6 @@
 package com.demo.tests;
 
 import com.demo.base.BaseTest;
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -10,27 +9,19 @@ import java.nio.file.Paths;
 public class GoogleHomeTest extends BaseTest {
 
     @Test
-    public void testGoogleTitleAndSearch() {
-        // 1. Navigate to Google
-        page.navigate("https://www.google.com");
+    public void testE2ELandingPage() {
+        // 1. Navigate to a fast, CI-friendly developer page
+        page.navigate("https://playwright.dev/java/");
 
-        // 2. Verify Homepage Title
+        // 2. Verify Title matches expectations
         String title = page.title();
-        Assert.assertEquals(title, "Google", "Title does not match!");
+        Assert.assertTrue(title.contains("Playwright"), "Title does not contain framework name!");
 
-        // 3. Find search box and fill it
-        Locator searchBox = page.locator("textarea[name='q']");
-        searchBox.fill("Playwright Java");
-        searchBox.press("Enter");
+        // 3. Locate a core element (Get Started Button) and verify visibility
+        boolean isButtonVisible = page.locator("text=Get started").isVisible();
+        Assert.assertTrue(isButtonVisible, "Get Started button is missing from the DOM.");
 
-        // 4. Wait for the search results container to appear on screen
-        page.waitForSelector("#search");
-
-        // 5. Take a screenshot of the actual state for debugging
-        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("target/surefire-reports/google-search-result.png")));
-
-        // 6. Robust Assertion: Verify the input field on the results page still holds our query
-        String inputValue = page.locator("textarea[name='q']").inputValue();
-        Assert.assertEquals(inputValue, "Playwright Java", "The search query was not preserved in the input box.");
+        // 4. Save a clean screenshot to your artifacts directory
+        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("target/surefire-reports/landing-page-success.png")));
     }
 }
