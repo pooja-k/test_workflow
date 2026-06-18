@@ -39,41 +39,17 @@ public class TestListener implements ITestListener {
     }
 
     private void attachScreenshotLink(ITestResult result) {
-        // Map the method names to the specific screenshots we save in the tests
         String methodName = result.getMethod().getMethodName();
-        String screenshotName = "";
+        String screenshotName = methodName + "-failure.png";
         
-        if (methodName.equals("testDarkModeEmulation")) {
-            // Try the custom screenshot first, fallback to failure screenshot if custom doesn't exist
-            File customScreenshot = new File("target/surefire-reports/dark-mode-check.png");
-            if (customScreenshot.exists()) {
-                screenshotName = "dark-mode-check.png";
-            } else {
-                String failureScreenshotName = methodName + "-failure.png";
-                File failureScreenshot = new File("target/surefire-reports/" + failureScreenshotName);
-                if (failureScreenshot.exists()) {
-                    screenshotName = failureScreenshotName;
-                }
-            }
-        } else {
-            // Check if there is an automatically captured failure screenshot
-            String failureScreenshotName = methodName + "-failure.png";
-            File failureScreenshot = new File("target/surefire-reports/" + failureScreenshotName);
-            if (failureScreenshot.exists()) {
-                screenshotName = failureScreenshotName;
-            }
-        }
+        // Check if the failure screenshot file actually exists in the report directory
+        String filePath = "target/surefire-reports/" + screenshotName;
+        File screenshot = new File(filePath);
         
-        if (!screenshotName.isEmpty()) {
-            // Check if the screenshot file actually exists in the report directory
-            String filePath = "target/surefire-reports/" + screenshotName;
-            File screenshot = new File(filePath);
-            
-            if (screenshot.exists()) {
-                // Inject an HTML link and embed the image directly in the TestNG Report log
-                Reporter.log("<br><a href='" + screenshotName + "' target='_blank'><b>View Captured Screenshot</b></a><br>");
-                Reporter.log("<br><a href='" + screenshotName + "' target='_blank'><img src='" + screenshotName + "' width='600' style='border:1px solid #ccc; max-width:100%;'/></a><br>");
-            }
+        if (screenshot.exists()) {
+            // Inject an HTML link and embed the image directly in the TestNG Report log
+            Reporter.log("<br><a href='" + screenshotName + "' target='_blank'><b>View Captured Failure Screenshot</b></a><br>");
+            Reporter.log("<br><a href='" + screenshotName + "' target='_blank'><img src='" + screenshotName + "' width='600' style='border:1px solid #ccc; max-width:100%;'/></a><br>");
         }
     }
 }
