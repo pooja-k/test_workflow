@@ -3,8 +3,7 @@ package com.demo.tests;
 import com.demo.base.BaseTest;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.ColorScheme;
-import com.microsoft.playwright.options.EmulateMediaOptions; // Updated import
+import com.microsoft.playwright.options.ColorScheme; // This one is fine!
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.nio.file.Paths;
@@ -29,10 +28,9 @@ public class GoogleHomeTest extends BaseTest {
         // Test 2: Emulate user browser system preferences (Dark Mode) safely via page options
         page.navigate("https://playwright.dev/java/");
         
-        // FIX: Use EmulateMediaOptions on the page instance instead of the context directly
+        // No separate import needed; Java resolves Page.EmulateMediaOptions automatically
         page.emulateMedia(new Page.EmulateMediaOptions().setColorScheme(ColorScheme.DARK));
         
-        // Force a brief pause or reload if necessary, though Playwright usually applies it instantly
         Locator htmlTag = page.locator("html");
         String dataTheme = htmlTag.getAttribute("data-theme");
         
