@@ -4,6 +4,7 @@ import com.demo.base.BaseTest;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.ColorScheme;
+import com.microsoft.playwright.options.EmulateMediaOptions; // Updated import
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import java.nio.file.Paths;
@@ -20,17 +21,18 @@ public class GoogleHomeTest extends BaseTest {
         
         getStartedBtn.click();
         
-        // Playwright handles auto-waiting for the transition
         Assert.assertTrue(page.url().contains("/docs/intro"), "URL did not transition to the intro docs page.");
     }
 
     @Test(priority = 2)
     public void testDarkModeEmulation() {
-        // Test 2: Emulate user browser system preferences (Dark Mode) and verify page adjustment
-        context.setColorScheme(ColorScheme.DARK);
+        // Test 2: Emulate user browser system preferences (Dark Mode) safely via page options
         page.navigate("https://playwright.dev/java/");
         
-        // Check if the HTML root element possesses the dark theme attribute preferred by Tailwind/Docusaurus
+        // FIX: Use EmulateMediaOptions on the page instance instead of the context directly
+        page.emulateMedia(new Page.EmulateMediaOptions().setColorScheme(ColorScheme.DARK));
+        
+        // Force a brief pause or reload if necessary, though Playwright usually applies it instantly
         Locator htmlTag = page.locator("html");
         String dataTheme = htmlTag.getAttribute("data-theme");
         
@@ -45,15 +47,12 @@ public class GoogleHomeTest extends BaseTest {
         // Test 3: Interact with complex elements (Modals and Dynamic Key Presses)
         page.navigate("https://playwright.dev/java/");
         
-        // Click the search button triggers a modal shortcut dialog
         Locator searchTrigger = page.locator(".DocSearch-Button");
         searchTrigger.click();
         
-        // Wait for the modal input field to pop open
         Locator searchInput = page.locator("#docsearch-input");
         Assert.assertTrue(searchInput.isVisible(), "Search dialog input modal did not display.");
         
-        // Type a query and look for dynamic suggestions
         searchInput.fill("Assertions");
         
         Locator firstResult = page.locator(".DocSearch-Hit-title").first();
