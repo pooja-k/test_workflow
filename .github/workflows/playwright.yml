@@ -5,7 +5,7 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Allows manual triggering from GitHub UI
+  workflow_dispatch: 
 
 jobs:
   test:
@@ -15,8 +15,9 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    # FIX: Changed 'actions/actions-setup-java@v4' to 'actions/setup-java@v4'
     - name: Set up JDK 17
-      uses: actions/actions-setup-java@v4
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -32,7 +33,7 @@ jobs:
       run: mvn test
 
     - name: Upload Test Evidence / Screenshots
-      if: always() # Always run this step even if tests fail
+      if: always() 
       uses: actions/upload-artifact@v4
       with:
         name: test-evidence
