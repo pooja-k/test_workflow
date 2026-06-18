@@ -1,0 +1,40 @@
+name: Playwright Java Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/actions-setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Build Project & Download Playwright Core
+      run: mvn compile test-compile
+
+    - name: Install Playwright Browsers
+      run: mvn exec:java -Dexec.mainClass="com.microsoft.playwright.CLI" -Dexec.args="install"
+
+    - name: Run Playwright Tests
+      run: mvn test
+
+    - name: Upload Test Evidence / Screenshots
+      if: always() # Always run this step even if tests fail
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-evidence
+        path: target/*.png
+        retention-days: 7
