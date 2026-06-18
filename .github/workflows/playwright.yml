@@ -32,10 +32,11 @@ jobs:
     - name: Run Playwright Tests
       run: mvn test
 
-    - name: Upload Test Evidence / Screenshots
+    - name: Upload TestNG HTML Report
       if: always() 
       uses: actions/upload-artifact@v4
       with:
-        name: test-evidence
-        path: target/*.png
+        name: testng-html-report
+        # This grabs TestNG's default report directory
+        path: target/surefire-reports/
         retention-days: 7
